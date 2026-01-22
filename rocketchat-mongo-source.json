@@ -4,6 +4,6 @@
     "connector.class": "com.mongodb.kafka.connect.MongoSourceConnector",
     "connection.uri": "mongodb://mongo:27017/rocketchat",
     "database": "rocketchat",
-    "collection": "rocketchat_message"
+    "pipeline": "[{\"$match\": {\"ns.coll\": {\"$regex\": \"^(rocketchat_message|users|rocketchat_room)$\"}}}]"
   }
 }
