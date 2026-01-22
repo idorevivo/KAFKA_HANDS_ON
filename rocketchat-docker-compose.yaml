@@ -30,6 +30,9 @@ services:
       - "traefik.backend=rocketchat"
       - "traefik.frontend.rule=Host: your.domain.tld"
 
+    networks:
+      - rocketchat_network
+
   mongo:
     image: mongo:4.0
     restart: unless-stopped
@@ -41,6 +44,9 @@ services:
     command: mongod --smallfiles --oplogSize 128 --replSet rs0 --storageEngine=mmapv1
     labels:
       - "traefik.enable=false"
+
+    networks:
+      - rocketchat_network
 
   # this container's job is just run the command to initialize the replica set.
   # it will run the command and remove himself (it will not stay running)
@@ -59,6 +65,9 @@ services:
         done; (exit $$s)"
     depends_on:
       - mongo
+
+    networks:
+      - rocketchat_network
 
   # hubot, the popular chatbot (add the bot user first and change the password before starting this image)
   hubot:
@@ -82,6 +91,9 @@ services:
     ports:
       - 3001:8080
 
+    networks:
+      - rocketchat_network
+
   #traefik:
   #  image: traefik:latest
   #  restart: unless-stopped
@@ -102,3 +114,9 @@ services:
   #    - 443:443
   #  volumes:
   #    - /var/run/docker.sock:/var/run/docker.sock
+
+
+networks:
+  rocketchat_network:
+    name: rocketchat_network
+    driver: bridge

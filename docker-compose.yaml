@@ -22,6 +22,8 @@ services:
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
 
+    networks:
+      - rocketchat_network
   
   kafka-connect:
     image: confluentinc/cp-kafka-connect:latest
@@ -50,3 +52,11 @@ services:
       - |
         confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:latest
         /etc/confluent/docker/run
+    
+    networks:
+      - rocketchat_network
+    
+
+networks:
+  rocketchat_network:
+    external: true
