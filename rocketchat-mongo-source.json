@@ -4,9 +4,6 @@
     "connector.class": "com.mongodb.kafka.connect.MongoSourceConnector",
     "connection.uri": "mongodb://mongo:27017/rocketchat",
     "database": "rocketchat",
-    "collection": "rocketchat_message",
-    "errors.tolerance": "all",
-    "offset.partition.name": "rocketchat_message_partition",
-    "startup.mode": "copy_existing"
+    "collection": "rocketchat_message"
   }
 }
