@@ -1,0 +1,25 @@
+{
+  "name": "kafka_hands_on",
+  "version": "1.0.0",
+  "description": "",
+  "main": "rocketchat_consumer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idorevivo/KAFKA_HANDS_ON.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/idorevivo/KAFKA_HANDS_ON/issues"
+  },
+  "homepage": "https://github.com/idorevivo/KAFKA_HANDS_ON#readme",
+  "dependencies": {
+    "@rocket.chat/sdk": "^0.2.9-2",
+    "kafkajs": "^2.2.4",
+    "mongodb": "4.0"
+  }
+}
