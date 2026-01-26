@@ -1,6 +1,6 @@
 const { Kafka } = require("kafkajs");
 const { isAdminUser } = require("../KAFKA_HANDS_ON/db_connection");
-const { sendMessage } = require("../KAFKA_HANDS_ON/rocketchat_message_bot");
+const { sendMessage } = require("./rocketchat_sdk");
 
 const kafka = new Kafka({
   clientId: "rocketchat-consumer",
