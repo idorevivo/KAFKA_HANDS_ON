@@ -1,6 +1,6 @@
 const { Kafka } = require("kafkajs");
 const { isAdminUser } = require("./db_connection");
-const { sendMessage } = require("./rocketchat_sdk");
+const { sendMessage, sendDirectMessage } = require("./rocketchat_sdk");
 const { renameRoom } = require("./rocketchat_restApi");
 
 const kafka = new Kafka({
@@ -92,6 +92,20 @@ const handleConsumedRoom = async (message) => {
   await handleRoomRenameIfNeeded(roomId, roomName);
 };
 
+const handleConsumedUser = async (message) => {
+  const payload = JSON.parse(JSON.parse(message.value.toString()).payload);
+
+  const { operationType } = payload;
+
+  if (operationType !== "insert") return;
+
+  const username = payload.fullDocument?.username;
+
+  if (username) {
+    await sendDirectMessage(`Welcome ${username}!`, username);
+  }
+};
+
 const run = async () => {
   await consumer.connect();
   await consumer.subscribe({
@@ -104,6 +118,11 @@ const run = async () => {
     fromBeginning: false,
   });
 
+  await consumer.subscribe({
+    topic: "rocketchat.users",
+    fromBeginning: false,
+  });
+
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       if (topic === "rocketchat.rocketchat_message") {
@@ -112,6 +131,10 @@ const run = async () => {
 
       if (topic === "rocketchat.rocketchat_room") {
         await handleConsumedRoom(message);
+      }
+
+      if (topic === "rocketchat.users") {
+        await handleConsumedUser(message);
       }
     },
   });

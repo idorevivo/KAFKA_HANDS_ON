@@ -29,4 +29,10 @@ const sendMessage = async (roomId, message) => {
   await driver.sendToRoomId(message, roomId);
 };
 
-module.exports = { sendMessage };
+const sendDirectMessage = async (message, username) => {
+  await connectRocketChat();
+
+  await driver.sendDirectToUser(message, username);
+};
+
+module.exports = { sendMessage, sendDirectMessage };
