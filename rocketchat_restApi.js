@@ -1,11 +1,9 @@
-const fetch = require("node-fetch");
-
 const HOST = "localhost:3000";
 const USERNAME = "MessageBot";
 const PASSWORD = "MessageBot";
 
 const connectREST = async () => {
-  const res = await fetch(`${HOST}/api/v1/login`, {
+  const res = await fetch(`http://${HOST}/api/v1/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user: USERNAME, password: PASSWORD }),
@@ -23,7 +21,7 @@ const connectREST = async () => {
 const renameRoom = async (roomId, newName) => {
   const { authToken, userId } = await connectREST();
 
-  await fetch(`${HOST}/api/v1/rooms.saveRoomSettings`, {
+  await fetch(`http://${HOST}/api/v1/rooms.saveRoomSettings`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
