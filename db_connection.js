@@ -7,6 +7,8 @@ let mongoClient;
 let db;
 
 const connectToMongo = async () => {
+  if (db) return db;
+
   mongoClient = new MongoClient(MONGO_URI);
   await mongoClient.connect();
 
@@ -20,6 +22,11 @@ const getUsersCollection = async () => {
   return database.collection("users");
 };
 
+const getMessageCollection = async () => {
+  const database = await connectToMongo();
+  return database.collection("rocketchat_message");
+};
+
 const isAdminUser = async (userId) => {
   const usersCollection = await getUsersCollection();
 
@@ -31,6 +38,13 @@ const isAdminUser = async (userId) => {
   return user?.roles?.includes("admin");
 };
 
+const getMessageById = async (messageId) => {
+  const messageCollection = await getMessageCollection();
+
+  return messageCollection.findOne({ _id: messageId });
+};
+
 module.exports = {
-  isAdminUser
+  isAdminUser,
+  getMessageById
 };

@@ -1,5 +1,5 @@
 const { Kafka } = require("kafkajs");
-const { isAdminUser } = require("./db_connection");
+const { isAdminUser, getMessageById } = require("./db_connection");
 const { sendMessage, sendDirectMessage } = require("./rocketchat_sdk");
 const { renameRoom } = require("./rocketchat_restApi");
 
@@ -53,10 +53,9 @@ const handleRoomRenameIfNeeded = async (roomId, roomName) => {
   }
 };
 
-const handleConsumedMessage = async (message) => {
+const handleInsertMessage = async (payload) => {
   const TRIGGER_POPULAR_WORD_MSG = "log popular word";
 
-  const payload = JSON.parse(JSON.parse(message.value.toString()).payload);
   const msg = payload.fullDocument?.msg;
   const userId = payload.fullDocument?.u?._id;
   const roomId = payload.fullDocument?.rid;
@@ -73,6 +72,40 @@ const handleConsumedMessage = async (message) => {
     }
   } else {
     trackWordOccurrences(msg);
+  }
+};
+
+const handleUpdateMessage = async (payload) => {
+  const updatedMessage = payload.updateDescription?.updatedFields?.msg;
+
+  if (!updatedMessage) return;
+
+  const messageId = payload.documentKey?._id;
+
+  if (!messageId) return;
+
+  const messageDocument = await getMessageById(messageId);
+
+  const messageOwnerUsername = messageDocument?.u?.username;
+  if (!messageOwnerUsername) return;
+
+  await sendDirectMessage(
+    `Your message has been updated to ${updatedMessage}`,
+    messageOwnerUsername,
+  );
+};
+
+const handleConsumedMessage = async (message) => {
+  const payload = JSON.parse(JSON.parse(message.value.toString()).payload);
+
+  const { operationType } = payload;
+
+  if (operationType === "insert") {
+    await handleInsertMessage(payload);
+  }
+
+  if (operationType === "update") {
+    await handleUpdateMessage(payload);
   }
 };
 
