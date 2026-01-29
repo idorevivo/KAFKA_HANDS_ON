@@ -1,6 +1,7 @@
 {
   "name": "kafka_hands_on",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "rocketchat_consumer.js",
   "scripts": {
@@ -19,6 +20,7 @@
   "homepage": "https://github.com/idorevivo/KAFKA_HANDS_ON#readme",
   "dependencies": {
     "@rocket.chat/sdk": "^0.2.9-2",
+    "dotenv": "^17.2.3",
     "kafkajs": "^2.2.4",
     "mongodb": "4.0",
     "node-fetch": "^3.3.2"
