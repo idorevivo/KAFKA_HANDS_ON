@@ -1,7 +1,8 @@
 import { sendDirectMessage } from "../api/messagesApi.js";
+import { getMessagePayload } from "../utils/topicMessageUtils.js";
 
 export const handleConsumedUser = async (message) => {
-  const payload = JSON.parse(JSON.parse(message.value.toString()).payload);
+  const payload = getMessagePayload(message);
 
   const { operationType } = payload;
 

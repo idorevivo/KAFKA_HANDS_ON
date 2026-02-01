@@ -1,33 +1,26 @@
-import { kafka } from "../kafka/kafkaClient.js";
 import { handleConsumedMessage } from "../handlers/messageHandler.js";
 import { handleConsumedRoom } from "../handlers/roomHandler.js";
 import { handleConsumedUser } from "../handlers/userHandler.js";
 import { config } from "../config/index.js";
+import { connectRocketChat } from "../api/connections/apiConnection.js";
+import { createConsumer, runConsumer } from "./genericConsumer.js";
 
-const consumer = kafka.consumer({ groupId: config.kafka.consumerGroupId });
+const topicHandlers = {
+  [config.kafka.topics.message]: handleConsumedMessage,
+  [config.kafka.topics.room]: handleConsumedRoom,
+  [config.kafka.topics.users]: handleConsumedUser,
+};
 
-export const runConsumer = async () => {
-  await consumer.connect();
+export const runRocketchatConsumer = async () => {
+  await connectRocketChat();
 
-  await consumer.subscribe({
-    topic: config.kafka.messageTopic,
-    fromBeginning: false,
-  });
-  await consumer.subscribe({
-    topic: config.kafka.roomTopic,
-    fromBeginning: false,
-  });
-  await consumer.subscribe({
-    topic: config.kafka.usersTopic,
-    fromBeginning: false,
+  const consumer = await createConsumer({
+    topics: Object.values(config.kafka.topics),
+    groupId: config.kafka.consumerGroupId,
   });
 
-  await consumer.run({
-    eachMessage: async ({ topic, message }) => {
-      if (topic === config.kafka.messageTopic)
-        await handleConsumedMessage(message);
-      if (topic === config.kafka.roomTopic) await handleConsumedRoom(message);
-      if (topic === config.kafka.usersTopic) await handleConsumedUser(message);
-    },
+  await runConsumer(consumer, async ({ topic, message }) => {
+    const topicHandler = topicHandlers[topic];
+    await topicHandler(message);
   });
 };

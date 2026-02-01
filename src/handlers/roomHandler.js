@@ -1,4 +1,6 @@
 import { renameRoom } from "../api/roomsApi.js";
+import { config } from "../config/index.js";
+import { getMessagePayload } from "../utils/topicMessageUtils.js";
 
 const reverseWord = (word) => word.split("").reverse().join("");
 
@@ -10,14 +12,17 @@ const reverseRoomName = (roomName) => {
 };
 
 const handleRoomRenameIfNeeded = async (roomId, roomName) => {
-  if (roomName && (roomName.includes("cat") || roomName.includes("black"))) {
+  if (
+    roomName &&
+    config.handlers.specialRoomWords.some((word) => roomName.includes(word))
+  ) {
     const newName = reverseRoomName(roomName);
     await renameRoom(roomId, newName);
   }
 };
 
 export const handleConsumedRoom = async (message) => {
-  const payload = JSON.parse(JSON.parse(message.value.toString()).payload);
+  const payload = getMessagePayload(message);
   const roomId = payload.documentKey?._id;
   const { operationType } = payload;
 
@@ -31,4 +36,3 @@ export const handleConsumedRoom = async (message) => {
 
   await handleRoomRenameIfNeeded(roomId, roomName);
 };
-

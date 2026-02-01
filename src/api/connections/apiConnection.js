@@ -1,4 +1,4 @@
-import { driver } from "@rocket.chat/sdk";
+import { driver, api } from "@rocket.chat/sdk";
 import { config } from "../../config/index.js";
 
 let isConnected = false;
@@ -8,8 +8,7 @@ export const connectRocketChat = async () => {
 
   await driver.connect({ host: config.rocketChat.host, useSsl: false });
   await driver.login({ username: config.rocketChat.user, password: config.rocketChat.pass });
+  await api.login({ username: config.rocketChat.user, password: config.rocketChat.pass });
 
   isConnected = true;
 };
-
-export { driver };

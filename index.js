@@ -1,8 +1,8 @@
-import { runConsumer } from "./src/consumers/rocketchatConsumer.js";
+import { runRocketchatConsumer } from "./src/consumers/rocketchatConsumer.js";
 
 (async () => {
   try {
-    await runConsumer();
+    await runRocketchatConsumer();
     console.log("RocketChat consumer started");
   } catch (err) {
     console.error("Failed to start RocketChat consumer", err);

@@ -21,6 +21,7 @@
   "dependencies": {
     "@rocket.chat/sdk": "^0.2.9-2",
     "dotenv": "^17.2.3",
+    "env-var": "^7.5.0",
     "kafkajs": "^2.2.4",
     "mongodb": "4.0",
     "node-fetch": "^3.3.2"
