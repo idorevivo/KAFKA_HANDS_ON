@@ -4,6 +4,7 @@ import { handleConsumedUser } from "../handlers/userHandler.js";
 import { config } from "../config/index.js";
 import { connectRocketChat } from "../apiConnections/apiConnection.js";
 import { createConsumer, runConsumer } from "./genericConsumer.js";
+import { NoTopicHandlerError } from "../errors/NoTopicHandlerError.js";
 
 const topicHandlers = {
   [config.kafka.topics.message]: handleConsumedMessage,
@@ -21,6 +22,11 @@ export const runRocketchatConsumer = async () => {
 
   await runConsumer(consumer, async ({ topic, message }) => {
     const topicHandler = topicHandlers[topic];
+
+    if (!topicHandler) {
+      throw new NoTopicHandlerError(`No handler defined for topic: ${topic}`);
+    }
+
     await topicHandler(message);
   });
 };
