@@ -11,14 +11,16 @@ const reverseRoomName = (roomName) => {
     .join(" ");
 };
 
-const handleRoomRenameIfNeeded = async (roomId, roomName) => {
-  if (
+const shouldRenameRoom = (roomName) => {
+  return (
     roomName &&
     config.handlers.specialRoomWords.some((word) => roomName.includes(word))
-  ) {
-    const newName = reverseRoomName(roomName);
-    await renameRoom(roomId, newName);
-  }
+  );
+};
+
+const handleRoomRename = async (roomId, roomName) => {
+  const newName = reverseRoomName(roomName);
+  await renameRoom(roomId, newName);
 };
 
 export const handleConsumedRoom = async (message) => {
@@ -34,5 +36,9 @@ export const handleConsumedRoom = async (message) => {
     payload.fullDocument?.fname ||
     payload.updateDescription?.updatedFields?.fname;
 
-  await handleRoomRenameIfNeeded(roomId, roomName);
+  if (!shouldRenameRoom(roomName)) {
+    return;
+  }
+
+  await handleRoomRename(roomId, roomName);
 };

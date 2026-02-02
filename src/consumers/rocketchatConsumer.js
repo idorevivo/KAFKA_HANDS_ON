@@ -2,7 +2,7 @@ import { handleConsumedMessage } from "../handlers/messageHandler.js";
 import { handleConsumedRoom } from "../handlers/roomHandler.js";
 import { handleConsumedUser } from "../handlers/userHandler.js";
 import { config } from "../config/index.js";
-import { connectRocketChat } from "../api/connections/apiConnection.js";
+import { connectRocketChat } from "../apiConnections/apiConnection.js";
 import { createConsumer, runConsumer } from "./genericConsumer.js";
 
 const topicHandlers = {

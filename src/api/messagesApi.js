@@ -1,4 +1,6 @@
 import { driver, api } from "@rocket.chat/sdk";
+import { ApiError } from "../errors/ApiError.js";
+
 
 export const sendMessage = async (roomId, message) => {
   await driver.joinRoom(roomId);
@@ -13,7 +15,7 @@ export const getMessageById = async (messageId) => {
   const res = await api.get("chat.getMessage", { msgId: messageId });
 
   if (!res || res.success !== true) {
-    throw new Error(`Failed to fetch message: ${JSON.stringify(res)}`);
+    throw new ApiError(`Failed to fetch message: ${JSON.stringify(res)}`);
   }
 
   return res.message;

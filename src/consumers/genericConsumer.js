@@ -1,14 +1,22 @@
 import { kafka } from "../kafka/kafkaClient.js";
+import { KafkaError } from "../errors/KafkaError.js";
 
 export const createConsumer = async ({ topics, groupId }) => {
-  const consumer = kafka.consumer({ groupId });
+  try {
+    const consumer = kafka.consumer({ groupId });
+    await consumer.connect();
+    await consumer.subscribe({ topics, fromBeginning: false });
 
-  await consumer.connect();
-  await consumer.subscribe({ topics, fromBeginning: false });
-
-  return consumer;
+    return consumer;
+  } catch (err) {
+    throw new KafkaError(`Kafka consumer creation failed: ${err.message}`);
+  }
 };
 
 export const runConsumer = async (consumer, eachMessage) => {
-  await consumer.run({ eachMessage });
+  try {
+    await consumer.run({ eachMessage });
+  } catch (err) {
+    throw new KafkaError(`Kafka consumer run failed: ${err.message}`);
+  }
 };
