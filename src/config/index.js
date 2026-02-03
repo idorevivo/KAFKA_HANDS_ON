@@ -6,6 +6,7 @@ export const config = {
     host: env.get('ROCKETCHAT_URL').default('localhost:3000').asString(),
     user: env.get('ROCKETCHAT_USER').default('MessageBot').asString(),
     pass: env.get('ROCKETCHAT_PASSWORD').default('MessageBot').asString(),
+    useSsl: env.get('ROCKETCHAT_USE_SSL').default('false').asBool(),
   },
   kafka: {
     host: env.get('KAFKA_HOST').default('localhost:9092').asString(),

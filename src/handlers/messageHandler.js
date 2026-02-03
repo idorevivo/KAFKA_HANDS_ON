@@ -36,24 +36,24 @@ const handleInsertMessage = async (payload) => {
   const userId = payload.fullDocument?.u?._id;
   const roomId = payload.fullDocument?.rid;
 
-  if (msg === config.handlers.triggerPopularWordMsg) {
-    const isAdmin = await isAdminUser(userId);
+  if (
+    msg === config.handlers.triggerPopularWordMsg &&
+    (await isAdminUser(userId))
+  ) {
+    const { popularWord, maxOccurrences } = getPopularWord();
+    await sendMessage(
+      roomId,
+      `Most popular word: ${popularWord}. Number of occurrences: ${maxOccurrences}`,
+    );
 
-    if (isAdmin) {
-      const { popularWord, maxOccurrences } = getPopularWord();
-      await sendMessage(
-        roomId,
-        `Most popular word: ${popularWord}. Number of occurrences: ${maxOccurrences}`,
-      );
-    }
-  } else {
-    trackWordOccurrences(msg);
+    return;
   }
+  trackWordOccurrences(msg);
 };
 
 const handleUpdateMessage = async (payload) => {
   const updatedMessage = payload.updateDescription?.updatedFields?.msg;
-  
+
   if (!updatedMessage) return;
 
   const messageId = payload.documentKey?._id;

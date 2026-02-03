@@ -23,11 +23,10 @@ export const sendDirectMessage = async (message, username) => {
 };
 
 export const getMessageById = async (messageId) => {
-  const res = await api.get("chat.getMessage", { msgId: messageId });
-
-  if (!res || res.success !== true) {
-    throw new ApiError(`Failed to fetch message: ${JSON.stringify(res)}`);
+  try {
+    const res = await api.get("chat.getMessage", { msgId: messageId });
+    return res.message;
+  } catch (err) {
+    throw new ApiError(`Error fetching message ${messageId}: ${err.message}`);
   }
-
-  return res.message;
 };

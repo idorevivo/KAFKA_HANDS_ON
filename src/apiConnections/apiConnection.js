@@ -8,7 +8,7 @@ export const connectRocketChat = async () => {
   if (isConnected) return;
 
   try {
-    await driver.connect({ host: config.rocketChat.host, useSsl: false });
+    await driver.connect({ host: config.rocketChat.host, useSsl: config.rocketChat.useSsl });
     await driver.login({
       username: config.rocketChat.user,
       password: config.rocketChat.pass,

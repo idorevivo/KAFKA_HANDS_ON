@@ -25,7 +25,6 @@ const handleRoomRename = async (roomId, roomName) => {
 
 export const handleConsumedRoom = async (message) => {
   const payload = getMessagePayload(message);
-  const roomId = payload.documentKey?._id;
   const { operationType } = payload;
 
   if (operationType !== "insert" && operationType !== "update") {
@@ -36,9 +35,8 @@ export const handleConsumedRoom = async (message) => {
     payload.fullDocument?.fname ||
     payload.updateDescription?.updatedFields?.fname;
 
-  if (!shouldRenameRoom(roomName)) {
-    return;
+  if (roomName && shouldRenameRoom(roomName)) {
+    const roomId = payload.documentKey?._id;
+    await handleRoomRename(roomId, roomName);
   }
-
-  await handleRoomRename(roomId, roomName);
 };

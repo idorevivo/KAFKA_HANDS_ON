@@ -3,7 +3,7 @@ import { handleConsumedRoom } from "../handlers/roomHandler.js";
 import { handleConsumedUser } from "../handlers/userHandler.js";
 import { config } from "../config/index.js";
 import { connectRocketChat } from "../apiConnections/apiConnection.js";
-import { createConsumer, runConsumer } from "./genericConsumer.js";
+import { KafkaConsumer } from "./KafkaConsumer.js";
 import { NoTopicHandlerError } from "../errors/NoTopicHandlerError.js";
 
 const topicHandlers = {
@@ -15,12 +15,14 @@ const topicHandlers = {
 export const runRocketchatConsumer = async () => {
   await connectRocketChat();
 
-  const consumer = await createConsumer({
+  const consumer = new KafkaConsumer({
     topics: Object.values(config.kafka.topics),
     groupId: config.kafka.consumerGroupId,
   });
 
-  await runConsumer(consumer, async ({ topic, message }) => {
+  await consumer.connect();
+
+  await consumer.run(async ({ topic, message }) => {
     const topicHandler = topicHandlers[topic];
 
     if (!topicHandler) {
